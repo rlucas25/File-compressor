@@ -2,21 +2,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <heap.h>
-typedef struct NoHuffman
-{
-    unsigned char c;
-    int freq;
-    struct NoHuffman *left;
-    struct NoHuffman *right;
-} No;
-
-typedef struct ArvoreHuffman
-{
-    No *raiz;
-    int *tabelaFrequencias;
-    int tamanhoTabela;
-} Arvore;
+#include "Heap.h"
+#include "Huffman.h"
 
 bool ehMenor_Huffman(void *pA, void *pB)
 {
@@ -33,7 +20,6 @@ void frequenciahuffman(const char *nomeArquivo, int *tabelaFrequencias)
     {
         tabelaFrequencias[i] = 0;
     }
-    int byteLido;
 
     // rb é para ler o arquivo em binário
     FILE *arquivo = fopen(nomeArquivo, "rb");
@@ -75,6 +61,15 @@ No *criaNo(unsigned char c, int freq)
 // Recebe o arquivo e transforma em estrutura de arvore huffman
 Arvore *Huffman(const char *arquivo)
 {
+    // Cria uma tabela temporária vazia
+    int tabelaTemporaria[256] = {0};
+
+    frequenciahuffman(arquivo, tabelaTemporaria);
+
+    return criarArvoreHuffman(tabelaTemporaria);
+}
+Arvore *criarArvoreHuffman(int *tabelaFrequencias)
+{
     // três ponteiros para o no como aux
     No *x, *y, *z;
 
@@ -90,13 +85,9 @@ Arvore *Huffman(const char *arquivo)
     // tamanho da tabela
     arvore->tamanhoTabela = 256;
 
-    // atribuir a frequencia na tabela de frequencia
-    frequenciahuffman(arquivo, arvore->tabelaFrequencias);
-
     // Criar o heap
     for (int i = 0; i < heap->capacidade; i++)
     {
-
         // Só cria nó se a letra realmente apareceu no texto
         if (arvore->tabelaFrequencias[i] > 0)
         {
@@ -115,8 +106,7 @@ Arvore *Huffman(const char *arquivo)
         y = RetiraMinimo(heap, ehMenor_Huffman);
 
         // cria um nó $ é o caractere com maior valor
-
-        //  cria um nó com a frequencia dos filhos e vai para o proxim
+        // cria um nó com a frequencia dos filhos e vai para o proxim
         z = criaNo('$', x->freq + y->freq);
 
         z->left = x;
@@ -133,8 +123,24 @@ Arvore *Huffman(const char *arquivo)
     free(heap);
     return arvore;
 }
-void gerarDicionario(No *raiz, char dicionario[256][256])
+
+void gerarDicionario(No *raiz, char dicionario[256][256], char caminho[256], int indice)
 {
+    if (raiz == NULL)
+        return;
+
+    if (raiz->left == NULL && raiz->right == NULL)
+    {
+        caminho[indice] = '\0';
+        strcpy(dicionario[raiz->c], caminho);
+        return;
+    }
+
+    caminho[indice] = '0';
+    gerarDicionario(raiz->left, dicionario, caminho, indice + 1);
+
+    caminho[indice] = '1';
+    gerarDicionario(raiz->right, dicionario, caminho, indice + 1);
 }
 
 /*
@@ -150,16 +156,16 @@ void concatenarCodigo(char *texto, char codigos[255][255], char resultados[])
 }
 */
 
-void codificar(FILE *entrada, FILE *saida, char codigos[255][255])
+void codificar(FILE *entrada, FILE *saida, char codigos[256][256])
 {
     // o byte que foi lido
     int byteLido;
 
-    // ele salva 8 bits + o /0
-    char texto[9];
+    // byte que será montado bit por bit
+    unsigned char byteSaida = 0;
 
-    // indice para o vetor texto
-    int j = 0;
+    // quantidade de bits já colocados dentro do byteSaida
+    int quantidadeBits = 0;
 
     // bruxaria ele volta para o ponteiro do file para o começo do arquivo, é nativa da biblioteca
     rewind(entrada);
@@ -168,37 +174,41 @@ void codificar(FILE *entrada, FILE *saida, char codigos[255][255])
     while ((byteLido = fgetc(entrada)) != EOF)
     {
         // o bit é o encontrado no código de acordo com o byte lido
-        char *bit = codigos[(unsigned char)byteLido];
+        char *codigo = codigos[(unsigned char)byteLido];
 
         // Ele roda até o final da frase/mensagem
-        for (int i = 0; bit[i] != '\0'; i++)
+        for (int i = 0; codigo[i] != '\0'; i++)
         {
-            // coloca os bits no vetor texto
-            texto[j] = bit[i];
+            // desloca os bits para a esquerda, abrindo espaço para o novo bit
+            byteSaida = byteSaida << 1;
 
-            // vai para o proximo para colocar o novo bit
-            j++;
-
-            // até ter 8 bits
-            if (j == 8)
+            // se o bit do código for '1', coloca 1 na última posição
+            if (codigo[i] == '1')
             {
-                texto[8] = '\0';
-                unsigned char byteConvertido = (unsigned char)strtol(texto, NULL, 2);
-                fputc(byteConvertido, saida);
-                j = 0;
+                byteSaida = byteSaida | 1;
+            }
+
+            quantidadeBits++;
+
+            // quando chegar em 8 bits, escreve o byte no arquivo
+            if (quantidadeBits == 8)
+            {
+                fputc(byteSaida, saida);
+
+                // reseta para montar o proximo byte
+                byteSaida = 0;
+                quantidadeBits = 0;
             }
         }
     }
-    if (j > 0)
+    // se o arquivo acabou, mas o último byte não encheu os 8 bits
+    if (quantidadeBits > 0)
     {
-        while (j < 8)
-        {
-            texto[j] = '0';
-            j++;
-        }
-        texto[8] = '\0';
-        unsigned char byteConvertido = (unsigned char)strtol(texto, NULL, 2);
-        fputc(byteConvertido, saida);
+        // empurra os bits que já temos para a esquerda preenchendo com zeros na direita.
+        byteSaida = byteSaida << (8 - quantidadeBits);
+
+        // grava esse último byte incompleto (agora preenchido com zeros) no arquivo
+        fputc(byteSaida, saida);
     }
 }
 
@@ -206,6 +216,12 @@ void decodificar(No *raiz, FILE *entrada, FILE *saida)
 {
     No *atual = raiz;
     unsigned char byte;
+
+    // 1. Descobre o tamanho do texto original olhando para a raiz
+    int totalLetras = raiz->freq;
+
+    // 2. Cria o contador de letras
+    int letrasImpressas = 0;
 
     // Realize enquanto for possível ler bytes, lê de byte em byte
     while (fread(&byte, 1, 1, entrada) == 1)
@@ -240,6 +256,15 @@ void decodificar(No *raiz, FILE *entrada, FILE *saida)
                 fputc(atual->c, saida);
                 // Retorna a raiz, repetindo o processo
                 atual = raiz;
+                // 3. Aumenta o contador e verifica a CONDIÇÃO DE PARADA
+                letrasImpressas++;
+
+                if (letrasImpressas == totalLetras)
+                {
+                    // Já imprimimos todas as letras! O resto do byte é lixo.
+                    // O return encerra a função na hora.
+                    return;
+                }
             }
         }
     }
@@ -258,4 +283,28 @@ void liberarHuffman(No *raiz)
 
     // liberar a raiz
     free(raiz);
+}
+
+void imprimeHuffman(No *raiz)
+{
+    if (raiz == NULL)
+        return;
+
+    if (raiz->left == NULL && raiz->right == NULL)
+    {
+        printf("%d:%c", raiz->freq, raiz->c);
+        return;
+    }
+
+    printf("├── %d\n", raiz->freq);
+    /*
+    if (raiz->left != NULL || raiz->right != NULL)
+    {
+        printf("├──");
+        imprimeHuffman(raiz->left);
+        printf("└──");
+        imprimeHuffman(raiz->right);
+        return;
+    }
+    */
 }
