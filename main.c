@@ -56,7 +56,7 @@ int main()
 
         case 2:
             printf("Digite qual elemento voce deseja verificar a ocorrencia: ");
-            scanf("%s", &verificar_ocorrencia);
+            scanf("%s", verificar_ocorrencia);
 
             if (arvore == NULL)
             {
@@ -70,7 +70,7 @@ int main()
             break;
 
         case 3:
-            imprimeHuffman(arvore->raiz);
+            imprimeHuffman(arvore->raiz,"", 0);
             break;
 
         case 4:
@@ -92,6 +92,8 @@ int main()
 
             liberarHuffman(arvoreRecuperada->raiz);
             free(arvoreRecuperada);
+            fclose(entrada);
+            fclose(saida);
             break;
 
         case 5:

@@ -1,9 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
-#include "Heap.h"
 #include "Huffman.h"
+#include <string.h>
 
 bool ehMenor_Huffman(void *pA, void *pB)
 {
@@ -84,7 +80,11 @@ Arvore *criarArvoreHuffman(int *tabelaFrequencias)
 
     // tamanho da tabela
     arvore->tamanhoTabela = 256;
-
+    
+    for (int i = 0; i < 256; i++)
+    {
+        arvore->tabelaFrequencias[i] = tabelaFrequencias[i];
+    }
     // Criar o heap
     for (int i = 0; i < heap->capacidade; i++)
     {
@@ -284,27 +284,42 @@ void liberarHuffman(No *raiz)
     // liberar a raiz
     free(raiz);
 }
+extern char *strdup(const char *s);
 
-void imprimeHuffman(No *raiz)
-{
+void imprimeHuffman(No *raiz, char *prefixo, int ehUltimo) {
     if (raiz == NULL)
         return;
 
-    if (raiz->left == NULL && raiz->right == NULL)
-    {
-        printf("%d:%c", raiz->freq, raiz->c);
-        return;
+    printf("%s", prefixo);
+
+    if (ehUltimo) {
+        printf("└── ");
+    } else {
+        printf("├── ");
     }
 
-    printf("├── %d\n", raiz->freq);
-    /*
-    if (raiz->left != NULL || raiz->right != NULL)
-    {
-        printf("├──");
-        imprimeHuffman(raiz->left);
-        printf("└──");
-        imprimeHuffman(raiz->right);
+    if (raiz->left == NULL && raiz->right == NULL) {
+        printf("%d:'%c'\n", raiz->freq, raiz->c);
         return;
+    } else {
+        printf("%d\n", raiz->freq);
     }
-    */
+
+    char *novoPrefixo = malloc(strlen(prefixo) + 10);
+
+    if (ehUltimo) {
+        sprintf(novoPrefixo, "%s    ", prefixo);
+    } else {
+        sprintf(novoPrefixo, "%s│   ", prefixo);
+    }
+
+    if (raiz->left != NULL) {
+        imprimeHuffman(raiz->left, novoPrefixo, 0);
+    }
+
+    if (raiz->right != NULL) {
+        imprimeHuffman(raiz->right, novoPrefixo, 1);
+    }
+
+    free(novoPrefixo);
 }

@@ -1,4 +1,4 @@
-#include "heap.h"
+#include "Heap.h"
 
 Heap *criarHeap(int capacidade)
 {
@@ -25,8 +25,8 @@ void MinHeapify(Heap *heap, int i, bool (*ehMenor)(void *, void *))
 
     int esq, dir, menor;
 
-    esq = 2 * i;
-    dir = 2 * i + 1;
+    esq = 2 * i + 1;
+    dir = 2 * i + 2;
 
     if (esq < heap->tamanho && ehMenor(heap->array[esq], heap->array[i]))
     {
@@ -61,12 +61,12 @@ void Insere(Heap *heap, void *no, bool (*ehMenor)(void *, void *))
     heap->tamanho++;
     int i = heap->tamanho - 1;
     heap->array[i] = no;
-    while (i > 0 && ehMenor(heap->array[i], heap->array[i / 2]))
+    while (i > 0 && ehMenor(heap->array[i], heap->array[(i - 1) / 2]))
     {
         void *temp = heap->array[i];
-        heap->array[i] = heap->array[i / 2];
-        heap->array[i / 2] = temp;
-        i = i / 2;
+        heap->array[i] = heap->array[(i - 1) / 2];
+        heap->array[(i - 1) / 2] = temp;
+        i = (i - 1) / 2;
     }
 }
 

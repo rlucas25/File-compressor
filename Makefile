@@ -1,5 +1,5 @@
 # ==========================================================
-# Makefile - FotoXop
+# Makefile - Huffman
 # =========================================================
 
 # 1️⃣ Variáveis (para facilitar manutenção)
@@ -7,7 +7,7 @@ CFLAGS=-O0 -std=c11 -Wall -Werror -Wextra -Wno-sign-compare -Wno-unused-paramete
 CLIBS=-lm
 LDFLAGS = -fsanitize=address,undefined,leak # Flags usadas no linking (geram o executável)
 PKG = `pkg-config --cflags --libs gtk+-3.0`
-EXECUTAVEL=FotoXop.exe # nome do executável final
+EXECUTAVEL=Huffman.exe # nome do executável final
 
 # ==========================================================
 # 2️⃣ Alvo principal (primeiro alvo → padrão ao rodar "make")
@@ -15,11 +15,10 @@ EXECUTAVEL=FotoXop.exe # nome do executável final
 
 all: $(EXECUTAVEL)
 
-$(EXECUTAVEL): main.o huffman.o heap.o
+$(EXECUTAVEL): main.o Huffman.o Heap.o
 	@echo "🔧 Ligando objetos e gerando executável..."
-	@gcc main.o huffman.o heap.o $(CLIBS) $(LDFLAGS) $(PKG) -o $(EXECUTAVEL)
+	@gcc main.o Huffman.o Heap.o $(CLIBS) $(LDFLAGS) $(PKG) -o $(EXECUTAVEL)
 	@echo "✅ Compilação concluída."
-	@echo "🚀 Para executar o programa digite ./$(EXECUTAVEL) no terminal."
 
 # ==========================================================
 # 3️⃣ Regras para gerar os arquivos objeto
@@ -29,13 +28,15 @@ main.o: main.c
 	@echo "🧩 Compilando main.c"
 	@gcc $(CFLAGS) $(PKG) -c main.c
 
-huffman.o: huffman.c
-	@echo "🧩 Compilando huffman.c"
-	@gcc $(CFLAGS) $(PKG) -c huffman.c
 
-heap.o: heap.c
-	@echo "🧩 Compilando heap.c"
-	@gcc $(CFLAGS) $(PKG) -c heap.c
+Huffman.o: Huffman.c
+	@echo "🧩 Compilando Huffman.c"
+	@gcc $(CFLAGS) $(PKG) -c Huffman.c
+
+
+Heap.o: Heap.c
+	@echo "🧩 Compilando Heap.c"
+	@gcc $(CFLAGS) $(PKG) -c Heap.c
 
 
 # ==========================================================
