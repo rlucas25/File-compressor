@@ -1,6 +1,7 @@
 #include "Huffman.h"
 #include <string.h>
 
+
 bool ehMenor_Huffman(void *pA, void *pB)
 {
     No *noA = (No *)pA;
@@ -80,7 +81,7 @@ Arvore *criarArvoreHuffman(int *tabelaFrequencias)
 
     // tamanho da tabela
     arvore->tamanhoTabela = 256;
-    
+
     for (int i = 0; i < 256; i++)
     {
         arvore->tabelaFrequencias[i] = tabelaFrequencias[i];
@@ -284,42 +285,93 @@ void liberarHuffman(No *raiz)
     // liberar a raiz
     free(raiz);
 }
-extern char *strdup(const char *s);
 
-void imprimeHuffman(No *raiz, char *prefixo, int ehUltimo) {
+int altura(No *raiz)
+{
+    if (raiz == NULL)
+        return 0;
+
+    int esq = altura(raiz->left);
+    int dir = altura(raiz->right);
+
+    if (esq > dir)
+        return esq + 1;
+    else
+        return dir + 1;
+}
+
+void escreverNo(char matriz[MAX_ALTURA][MAX_LARGURA], int linha, int coluna, No *no)
+{
+    char texto[30];
+
+    if (no->left == NULL && no->right == NULL)
+    {
+        sprintf(texto, "[%c|%d]", no->c, no->freq);
+    }
+    else
+    {
+        sprintf(texto, "[*|%d]", no->freq);
+    }
+
+    int tamanho = strlen(texto);
+
+    for (int i = 0; i < tamanho; i++)
+    {
+        if (coluna + i >= 0 && coluna + i < MAX_LARGURA)
+        {
+            matriz[linha][coluna + i] = texto[i];
+        }
+    }
+}
+
+void montarArvore(No *raiz, char matriz[MAX_ALTURA][MAX_LARGURA],
+                  int linha, int coluna, int espaco)
+{
     if (raiz == NULL)
         return;
 
-    printf("%s", prefixo);
+    escreverNo(matriz, linha, coluna, raiz);
 
-    if (ehUltimo) {
-        printf("└── ");
-    } else {
-        printf("├── ");
+    if (raiz->left != NULL)
+    {
+        matriz[linha + 1][coluna - espaco / 2] = '/';
+        montarArvore(raiz->left, matriz, linha + 2, coluna - espaco, espaco / 2);
     }
 
-    if (raiz->left == NULL && raiz->right == NULL) {
-        printf("%d:'%c'\n", raiz->freq, raiz->c);
-        return;
-    } else {
-        printf("%d\n", raiz->freq);
+    if (raiz->right != NULL)
+    {
+        matriz[linha + 1][coluna + espaco / 2] = '\\';
+        montarArvore(raiz->right, matriz, linha + 2, coluna + espaco, espaco / 2);
     }
-
-    char *novoPrefixo = malloc(strlen(prefixo) + 10);
-
-    if (ehUltimo) {
-        sprintf(novoPrefixo, "%s    ", prefixo);
-    } else {
-        sprintf(novoPrefixo, "%s│   ", prefixo);
-    }
-
-    if (raiz->left != NULL) {
-        imprimeHuffman(raiz->left, novoPrefixo, 0);
-    }
-
-    if (raiz->right != NULL) {
-        imprimeHuffman(raiz->right, novoPrefixo, 1);
-    }
-
-    free(novoPrefixo);
 }
+
+void imprimirArvore(No *raiz)
+{
+    char matriz[MAX_ALTURA][MAX_LARGURA];
+
+    for (int i = 0; i < MAX_ALTURA; i++)
+    {
+        for (int j = 0; j < MAX_LARGURA; j++)
+        {
+            matriz[i][j] = ' ';
+        }
+    }
+
+    int h = altura(raiz);
+
+    int colunaInicial = MAX_LARGURA / 2;
+    int espacoInicial = 32;
+
+    montarArvore(raiz, matriz, 0, colunaInicial, espacoInicial);
+
+    for (int i = 0; i < h * 2; i++)
+    {
+        for (int j = 0; j < MAX_LARGURA; j++)
+        {
+            printf("%c", matriz[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+                          

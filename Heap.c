@@ -76,7 +76,7 @@ void *RetiraMinimo(Heap *heap, bool (*ehMenor)(void *, void *))
         return NULL;
     if (heap->tamanho < 1)
     {
-        printf("Erro: Underflow");
+        printf("Erro: Tamanho do heap invalido\n");
         return NULL;
     }
 

@@ -1,5 +1,7 @@
 #ifndef HUFFMAN_H
 #define HUFFMAN_H
+#define MAX_ALTURA 50
+#define MAX_LARGURA 300
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,6 +32,9 @@ void gerarDicionario(No *raiz, char dicionario[256][256], char caminho[256], int
 void codificar(FILE *entrada, FILE *saida, char codigos[256][256]);
 void decodificar(No *raiz, FILE *entrada, FILE *saida);
 void liberarHuffman(No *raiz);
-void imprimeHuffman(No *raiz, char *prefixo, int ehUltimo);
 
+int altura(No *raiz);
+void escreverNo(char matriz[MAX_ALTURA][MAX_LARGURA], int linha, int coluna, No *no);
+void imprimirArvore(No *raiz);
+void montarArvore(No *raiz, char matriz[MAX_ALTURA][MAX_LARGURA],int linha, int coluna, int espaco);
 #endif // HUFFMAN_H
