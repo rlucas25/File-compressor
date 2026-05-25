@@ -117,8 +117,14 @@ int main()
             break;
 
         case 4:
-            printf("Digite o nome do arquivo: ");
+            printf("Digite o nome do arquivo (exemplo.huf): ");
             scanf("%s", nome_entrada_D);
+            
+            if (strlen(nome_entrada_D) < 4 || strcmp(nome_entrada_D + strlen(nome_entrada_D) - 4, ".huf") != 0)
+            {
+                printf("\n\tErro: O arquivo deve ter a extensão .huf\n");
+                break;
+            }
 
             printf("\n\tRealizando descomprensao do arquivo %s\n", nome_entrada_D);
 
