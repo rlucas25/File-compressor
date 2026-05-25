@@ -129,15 +129,21 @@ int main()
             printf("\n\tRealizando descomprensao do arquivo %s\n", nome_entrada_D);
 
             entrada = fopen(nome_entrada_D, "rb");
+
             if (entrada == NULL)
             {
                 printf("\n\tErro ao abrir o arquivo compactado\n");
                 break;
             }
+            
             // Lê os primeiros 256 caracteres no arquivo que salvamos de cabeçário
             int tabelaRecuperada[256] = {0};
-            fread(tabelaRecuperada, sizeof(int), 256, entrada);
-
+            if (fread(tabelaRecuperada, sizeof(int), 256, entrada) < 1)
+            {
+                printf("\n\tErro ao ler a tabela de frequências do arquivo compactado\n");
+                fclose(entrada);
+                break;
+            }
             // lê os caracteres depois dos 256 caracteres, ou seja, os 10 caracteres de extensão salvo no cabeçário.
             char extensao_recuperada[10] = {0};
             fread(extensao_recuperada, sizeof(char), 10, entrada);
@@ -174,12 +180,16 @@ int main()
             }
 
             Arvore *arvoreRecuperada = criarArvoreHuffman(tabelaRecuperada);
-            decodificar(arvoreRecuperada->raiz, entrada, saida);
+            
+            bool sucessoDecodificacao = decodificar(arvoreRecuperada->raiz, entrada, saida);
+
+            if (sucessoDecodificacao){
+                printf("\n\tArquivo descomprimido com sucesso...\n\t Nome do arquivo: %s\n", nome_saida_D);
+            }
 
             liberarArvore(arvoreRecuperada);
             fclose(entrada);
             fclose(saida);
-            printf("\n\tArquivo descomprimido com sucesso...\n Nome do arquivo: %s\n", nome_saida_D);
             break;
 
         case 5:

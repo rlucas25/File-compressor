@@ -30,7 +30,7 @@ Arvore *huffman(const char *arquivo);
 Arvore *criarArvoreHuffman(int *tabelaFrequencias);
 void gerarDicionario(No *raiz, char dicionario[256][256], char caminho[256], int indice);
 void codificar(FILE *entrada, FILE *saida, char codigos[256][256]);
-void decodificar(No *raiz, FILE *entrada, FILE *saida);
+bool decodificar(No *raiz, FILE *entrada, FILE *saida);
 void liberarArvore(Arvore *arvore);
 void auxLiberarArvore(No *raiz);
 

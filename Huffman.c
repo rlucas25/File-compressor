@@ -112,7 +112,7 @@ Arvore *criarArvoreHuffman(int *tabelaFrequencias)
         arvore->tabelaFrequencias[i] = tabelaFrequencias[i];
     }
     // Criar o heap
-    for (int i = 0; i < heap->capacidade; i++)
+    for (int i = 0; i < 256; i++)
     {
         // Só cria nó se a letra realmente apareceu no texto
         if (arvore->tabelaFrequencias[i] > 0)
@@ -234,12 +234,17 @@ void codificar(FILE *entrada, FILE *saida, char codigos[256][256])
     }
 }
 
-void decodificar(No *raiz, FILE *entrada, FILE *saida)
+bool decodificar(No *raiz, FILE *entrada, FILE *saida)
 {
     if (raiz == NULL || entrada == NULL || saida == NULL)
     {
         printf("Erro: Raiz, arquivo de entrada ou saída é nulo\n");
-        return;
+        return false;
+    }
+    if (raiz->freq <= 0)
+    {
+        printf("Erro: A frequência da raiz é zero ou negativa, não é possível decodificar\n");
+        return false;
     }
 
     No *atual = raiz;
@@ -291,11 +296,12 @@ void decodificar(No *raiz, FILE *entrada, FILE *saida)
                 {
                     // Já imprimimos todas as letras! O resto do byte é lixo.
                     // O return encerra a função na hora.
-                    return;
+                    return true;
                 }
             }
         }
     }
+    return false;
 }
 
 void liberarArvore(Arvore *arvore)
@@ -401,7 +407,7 @@ void imprimirArvore(No *raiz)
         printf("Erro: Raiz é nula\n");
         return;
     }
-    
+
     char matriz[MAX_ALTURA][MAX_LARGURA];
 
     for (int i = 0; i < MAX_ALTURA; i++)
