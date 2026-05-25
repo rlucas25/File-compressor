@@ -309,8 +309,10 @@ void liberarArvore(Arvore *arvore)
     if (arvore == NULL)
         return;
 
-    auxLiberarArvore(arvore->raiz);
-    free(arvore->tabelaFrequencias);
+    if ( arvore->raiz != NULL )
+        auxLiberarArvore(arvore->raiz);
+    if ( arvore-> != NULL ) 
+        free(arvore->tabelaFrequencias);
     free(arvore);
 }
 
@@ -320,13 +322,10 @@ void auxLiberarArvore(No *raiz)
     if (raiz == NULL)
         return;
 
-    // liberar raiz esquerda
     auxLiberarArvore(raiz->left);
 
-    // liberar raiz direita
     auxLiberarArvore(raiz->right);
 
-    // liberar a raiz
     free(raiz);
 }
 
