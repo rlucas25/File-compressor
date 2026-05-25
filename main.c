@@ -73,7 +73,7 @@ int main()
                 arvore = NULL;
             }
             
-            arvore = Huffman(nome_entrada_C);
+            arvore = huffman(nome_entrada_C);
             
             if (arvore == NULL)
             {

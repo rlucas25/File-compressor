@@ -4,13 +4,25 @@
 
 bool ehMenor_Huffman(void *pA, void *pB)
 {
+    if ( pA == NULL || pB == NULL)
+    {
+        printf("Erro: Ponteiro para nó é nulo\n");
+        return false;
+    }
     No *noA = (No *)pA;
     No *noB = (No *)pB;
+    
+
     return (noA->freq <= noB->freq);
 }
 
 void frequenciahuffman(const char *nomeArquivo, int *tabelaFrequencias)
 {
+    if (nomeArquivo == NULL || tabelaFrequencias == NULL)
+    {
+        printf("Erro: Nome do arquivo ou tabela de frequências é nulo\n");
+        return;
+    }
 
     // Zerar a frequencia da tabela por garantia que vai começar de 0
     for (int i = 0; i < 256; i++)
@@ -56,8 +68,14 @@ No *criaNo(unsigned char c, int freq)
     return novo;
 }
 // Recebe o arquivo e transforma em estrutura de arvore huffman
-Arvore *Huffman(const char *arquivo)
+Arvore *huffman(const char *arquivo)
 {
+    if (arquivo == NULL)
+    {
+        printf("Erro: Nome do arquivo é nulo\n");
+        return NULL;
+    }
+
     // Cria uma tabela temporária vazia
     int tabelaTemporaria[256] = {0};
 
@@ -65,8 +83,15 @@ Arvore *Huffman(const char *arquivo)
 
     return criarArvoreHuffman(tabelaTemporaria);
 }
+
 Arvore *criarArvoreHuffman(int *tabelaFrequencias)
 {
+    if (tabelaFrequencias == NULL)
+    {
+        printf("Erro: Tabela de frequências é nula\n");
+        return NULL;
+    }
+
     // três ponteiros para o no como aux
     No *x, *y, *z;
 
@@ -127,8 +152,11 @@ Arvore *criarArvoreHuffman(int *tabelaFrequencias)
 
 void gerarDicionario(No *raiz, char dicionario[256][256], char caminho[256], int indice)
 {
-    if (raiz == NULL)
+    if (raiz == NULL || dicionario == NULL || caminho == NULL)
+    {
+        printf("Erro: Raiz, dicionário ou caminho é nulo\n");
         return;
+    }
 
     if (raiz->left == NULL && raiz->right == NULL)
     {
@@ -144,21 +172,14 @@ void gerarDicionario(No *raiz, char dicionario[256][256], char caminho[256], int
     gerarDicionario(raiz->right, dicionario, caminho, indice + 1);
 }
 
-/*
-void concatenarCodigo(char *texto, char codigos[255][255], char resultados[])
-    {
-    // começa o vetor com \0, para o strcat conseguir de onde concatenar
-    resultados[0] = '\0';
-    for (int i; texto[i] != '\0'; i++)
-    {
-        // concatena os codigos um atras do outro para encaixar nos bytes.
-        strcat(resultados, codigos[(unsigned char)texto[i]]);
-    }
-}
-*/
-
 void codificar(FILE *entrada, FILE *saida, char codigos[256][256])
 {
+    if (entrada == NULL || saida == NULL || codigos == NULL)
+    {
+        printf("Erro: Arquivo de entrada, saída ou códigos é nulo\n");
+        return;
+    }
+
     // o byte que foi lido
     int byteLido;
 
@@ -215,6 +236,12 @@ void codificar(FILE *entrada, FILE *saida, char codigos[256][256])
 
 void decodificar(No *raiz, FILE *entrada, FILE *saida)
 {
+    if (raiz == NULL || entrada == NULL || saida == NULL)
+    {
+        printf("Erro: Raiz, arquivo de entrada ou saída é nulo\n");
+        return;
+    }
+
     No *atual = raiz;
     unsigned char byte;
 
@@ -273,6 +300,9 @@ void decodificar(No *raiz, FILE *entrada, FILE *saida)
 
 void liberarArvore(Arvore *arvore)
 {
+    if (arvore == NULL)
+        return;
+
     auxLiberarArvore(arvore->raiz);
     free(arvore->tabelaFrequencias);
     free(arvore);
@@ -310,6 +340,17 @@ int altura(No *raiz)
 
 void escreverNo(char matriz[MAX_ALTURA][MAX_LARGURA], int linha, int coluna, No *no)
 {
+    if (matriz == NULL || no == NULL)
+    {
+        printf("Erro: Matriz ou nó é nulo\n");
+        return;
+    }
+    if (linha < 0 || linha >= MAX_ALTURA || coluna < 0 || coluna >= MAX_LARGURA)
+    {
+        printf("Erro: Linha ou coluna fora dos limites da matriz\n");
+        return;
+    }
+
     char texto[30];
 
     if (no->left == NULL && no->right == NULL)
@@ -355,6 +396,12 @@ void montarArvore(No *raiz, char matriz[MAX_ALTURA][MAX_LARGURA],
 
 void imprimirArvore(No *raiz)
 {
+    if (raiz == NULL)
+    {
+        printf("Erro: Raiz é nula\n");
+        return;
+    }
+    
     char matriz[MAX_ALTURA][MAX_LARGURA];
 
     for (int i = 0; i < MAX_ALTURA; i++)

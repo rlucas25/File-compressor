@@ -26,7 +26,7 @@ typedef struct ArvoreHuffman
 bool ehMenor_Huffman(void *pA, void *pB);
 void frequenciahuffman(const char *nomeArquivo, int *tabelaFrequencias);
 No *criaNo(unsigned char c, int freq);
-Arvore *Huffman(const char *arquivo);
+Arvore *huffman(const char *arquivo);
 Arvore *criarArvoreHuffman(int *tabelaFrequencias);
 void gerarDicionario(No *raiz, char dicionario[256][256], char caminho[256], int indice);
 void codificar(FILE *entrada, FILE *saida, char codigos[256][256]);
