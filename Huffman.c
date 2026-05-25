@@ -94,17 +94,17 @@ Arvore *criarArvoreHuffman(int *tabelaFrequencias)
         {
             // O próprio índice 'i' é a letra na tabela ASCII!
             z = criaNo((unsigned char)i, arvore->tabelaFrequencias[i]);
-            Insere(heap, z, ehMenor_Huffman);
+            inserir(heap, z, ehMenor_Huffman);
         }
     }
     // pegar o heap e retirar
     while (heap->tamanho > 1)
     {
         // aux vai receber o retira minimo, vai pegar o menor nó
-        x = RetiraMinimo(heap, ehMenor_Huffman);
+        x = retiraMinimo(heap, ehMenor_Huffman);
 
         // aux vai receber o retira minimo, vai pegar o segundo menor nó
-        y = RetiraMinimo(heap, ehMenor_Huffman);
+        y = retiraMinimo(heap, ehMenor_Huffman);
 
         // cria um nó $ é o caractere com maior valor
         // cria um nó com a frequencia dos filhos e vai para o proxim
@@ -115,11 +115,11 @@ Arvore *criarArvoreHuffman(int *tabelaFrequencias)
 
         z->freq = x->freq + y->freq;
 
-        Insere(heap, z, ehMenor_Huffman);
+        inserir(heap, z, ehMenor_Huffman);
     }
 
     //  Após so ter um nó esta sendo usado este raiz
-    arvore->raiz = RetiraMinimo(heap, ehMenor_Huffman);
+    arvore->raiz = retiraMinimo(heap, ehMenor_Huffman);
     free(heap->array);
     free(heap);
     return arvore;
@@ -271,16 +271,24 @@ void decodificar(No *raiz, FILE *entrada, FILE *saida)
     }
 }
 
-void liberarHuffman(No *raiz)
+void liberarArvore(Arvore *arvore)
+{
+    auxLiberarArvore(arvore->raiz);
+    free(arvore->tabelaFrequencias);
+    free(arvore);
+}
+
+
+void auxLiberarArvore(No *raiz)
 {
     if (raiz == NULL)
         return;
 
     // liberar raiz esquerda
-    liberarHuffman(raiz->left);
+    auxLiberarArvore(raiz->left);
 
     // liberar raiz direita
-    liberarHuffman(raiz->right);
+    auxLiberarArvore(raiz->right);
 
     // liberar a raiz
     free(raiz);

@@ -62,11 +62,19 @@ int main()
                 printf("\n\tFalha ao abrir o arquivo! Voltando ao menu inicial!\n\n");
                 break;
             }
+            
             fseek(entrada, 0, SEEK_END);
             long tamanhoEntrada = ftell(entrada);
             fseek(entrada, 0, SEEK_SET);
-
+            
+            if ( arvore != NULL)
+            {
+                liberarArvore(arvore);
+                arvore = NULL;
+            }
+            
             arvore = Huffman(nome_entrada_C);
+            
             if (arvore == NULL)
             {
                 printf("Erro ao cria a árvore de Huffman.\n");
@@ -162,8 +170,7 @@ int main()
             Arvore *arvoreRecuperada = criarArvoreHuffman(tabelaRecuperada);
             decodificar(arvoreRecuperada->raiz, entrada, saida);
 
-            liberarHuffman(arvoreRecuperada->raiz);
-            free(arvoreRecuperada);
+            liberarArvore(arvoreRecuperada);
             fclose(entrada);
             fclose(saida);
             printf("\n\tArquivo descomprimido com sucesso...\n Nome do arquivo: %s\n", nome_saida_D);
@@ -171,6 +178,7 @@ int main()
 
         case 5:
             printf("\n\tEncerrando programa!");
+            liberarArvore(arvore);
             exit(1);
             break;
         }

@@ -2,25 +2,35 @@
 
 Heap *criarHeap(int capacidade)
 {
+    if (capacidade <= 0)
+    {
+        printf("Erro: Capacidade do heap deve ser maior que zero\n");
+        return NULL;
+    }
+
     Heap *heap = (Heap *)malloc(sizeof(Heap));
-    heap->array = malloc(capacidade * sizeof(void *));
+    
     if (!heap)
     {
         return NULL;
     }
+
+    heap->array = malloc(capacidade * sizeof(void *));
+    
     if (!heap->array)
     {
         free(heap);
         return NULL;
+    
     }
     heap->tamanho = 0;
     heap->capacidade = capacidade;
     return heap;
 }
 // Arrumar a comparaçãeap->array[i]->frequencia < heap->array[i\2]->frequenciao e usar a função de comparação passada como parâmetro
-void MinHeapify(Heap *heap, int i, bool (*ehMenor)(void *, void *))
+void minHeapify(Heap *heap, int i, bool (*ehMenor)(void *, void *))
 {
-    if (!heap)
+    if (!heap || !heap->array || i < 0 || i >= heap->tamanho)
         return;
 
     int esq, dir, menor;
@@ -45,16 +55,21 @@ void MinHeapify(Heap *heap, int i, bool (*ehMenor)(void *, void *))
         void *aux = heap->array[i];
         heap->array[i] = heap->array[menor];
         heap->array[menor] = aux;
-        MinHeapify(heap, menor, ehMenor);
+        minHeapify(heap, menor, ehMenor);
     }
 }
 
-void Insere(Heap *heap, void *no, bool (*ehMenor)(void *, void *))
+void inserir(Heap *heap, void *no, bool (*ehMenor)(void *, void *))
 {
 
     if (heap->tamanho == heap->capacidade)
     {
         printf("Erro: Heap cheio");
+        return;
+    }
+    if (!heap || !heap->array || !no)
+    {
+        printf("Erro: Heap, array ou no do heap é nulo\n");
         return;
     }
 
@@ -70,7 +85,7 @@ void Insere(Heap *heap, void *no, bool (*ehMenor)(void *, void *))
     }
 }
 
-void *RetiraMinimo(Heap *heap, bool (*ehMenor)(void *, void *))
+void *retiraMinimo(Heap *heap, bool (*ehMenor)(void *, void *))
 {
     if (!heap)
         return NULL;
@@ -83,7 +98,7 @@ void *RetiraMinimo(Heap *heap, bool (*ehMenor)(void *, void *))
     void *minimo = heap->array[0];
     heap->array[0] = heap->array[heap->tamanho - 1];
     heap->tamanho--;
-    MinHeapify(heap, 0, ehMenor);
+    minHeapify(heap, 0, ehMenor);
 
     return minimo;
 }

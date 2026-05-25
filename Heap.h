@@ -15,11 +15,11 @@ typedef struct Heap
 
 Heap *criarHeap(int capacidade);
 
-void MinHeapify(Heap *heap, int i, bool (*ehMenor)(void *, void *));
+void minHeapify(Heap *heap, int i, bool (*ehMenor)(void *, void *));
 
-void Insere(Heap *heap, void *no, bool (*ehMenor)(void *, void *));
+void inserir(Heap *heap, void *no, bool (*ehMenor)(void *, void *));
 
-void *RetiraMinimo(Heap *heap, bool (*ehMenor)(void *, void *));
+void *retiraMinimo(Heap *heap, bool (*ehMenor)(void *, void *));
 
 void liberarHeap(Heap *heap, void (*liberarChave)(void *));
 

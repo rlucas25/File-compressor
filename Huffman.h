@@ -31,7 +31,8 @@ Arvore *criarArvoreHuffman(int *tabelaFrequencias);
 void gerarDicionario(No *raiz, char dicionario[256][256], char caminho[256], int indice);
 void codificar(FILE *entrada, FILE *saida, char codigos[256][256]);
 void decodificar(No *raiz, FILE *entrada, FILE *saida);
-void liberarHuffman(No *raiz);
+void liberarArvore(Arvore *arvore);
+void auxLiberarArvore(No *raiz);
 
 int altura(No *raiz);
 void escreverNo(char matriz[MAX_ALTURA][MAX_LARGURA], int linha, int coluna, No *no);
