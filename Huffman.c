@@ -306,12 +306,11 @@ bool decodificar(No *raiz, FILE *entrada, FILE *saida)
 
 void liberarArvore(Arvore *arvore)
 {
-    if (arvore == NULL)
-        return;
+    if (arvore == NULL) return;
 
     if ( arvore->raiz != NULL )
         auxLiberarArvore(arvore->raiz);
-    if ( arvore-> != NULL ) 
+    if ( arvore->tabelaFrequencias != NULL ) 
         free(arvore->tabelaFrequencias);
     free(arvore);
 }

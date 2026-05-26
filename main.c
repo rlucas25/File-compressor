@@ -25,7 +25,7 @@ int main()
         switch (menu)
         {
         case 1:
-            printf("Digite o nome do arquivo: ");
+            printf("Digite o nome do arquivo que deseja comprimir: ");
             scanf("%s", nome_entrada_C);
 
             char *extensao = strrchr(nome_entrada_C, '.');
@@ -117,7 +117,7 @@ int main()
             break;
 
         case 4:
-            printf("Digite o nome do arquivo (exemplo.huf): ");
+            printf("Digite o nome do arquivo que deseja descomprimir (exemplo.huf): ");
             scanf("%s", nome_entrada_D);
             
             if (strlen(nome_entrada_D) < 4 || strcmp(nome_entrada_D + strlen(nome_entrada_D) - 4, ".huf") != 0)
@@ -125,6 +125,8 @@ int main()
                 printf("\n\tErro: O arquivo deve ter a extensão .huf\n");
                 break;
             }
+            printf("Digite o nome do arquivo de saida: ");
+            scanf("%s", nome_saida_D);
 
             printf("\n\tRealizando descomprensao do arquivo %s\n", nome_entrada_D);
 
@@ -148,9 +150,6 @@ int main()
             char extensao_recuperada[10] = {0};
             fread(extensao_recuperada, sizeof(char), 10, entrada);
 
-            // copiar o nome de entrada colocado para o nome de saida
-            strcpy(nome_saida_D, nome_entrada_D);
-
             char *ponto_huf = strrchr(nome_saida_D, '.');
 
             // Se não for nulo, trocar o . por \0 para ler só até antes do .huff
@@ -158,8 +157,6 @@ int main()
             {
                 *ponto_huf = '\0';
             }
-            // colocar descomprimido para não sobescrever o original
-            strcat(nome_saida_D, "_descomprimido");
 
             // se tiver uma extensão ele coloca ela no arquivo de saida, se não ele retorna como .txt no pior dos casos
             if (strlen(extensao_recuperada) > 0)
@@ -169,6 +166,16 @@ int main()
             else
             {
                 strcat(nome_saida_D, ".txt");
+            }
+
+            if ( strcmp(nome_entrada_D, nome_saida_D) == 0){
+
+                char *ponto = strrchr(nome_saida_D,'.');
+
+                if (ponto != NULL){
+                    *ponto = '\0';
+                }
+                strcat(nome_saida_D, "(1).huf");
             }
 
             saida = fopen(nome_saida_D, "wb");
