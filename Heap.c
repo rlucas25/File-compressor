@@ -27,7 +27,7 @@ Heap *criarHeap(int capacidade)
     heap->capacidade = capacidade;
     return heap;
 }
-// Arrumar a comparaçãeap->array[i]->frequencia < heap->array[i\2]->frequenciao e usar a função de comparação passada como parâmetro
+
 void minHeapify(Heap *heap, int i, bool (*ehMenor)(void *, void *))
 {
     if (!heap || !heap->array || i < 0 || i >= heap->tamanho)
@@ -98,8 +98,8 @@ void *retiraMinimo(Heap *heap, bool (*ehMenor)(void *, void *))
     void *minimo = heap->array[0];
     heap->array[0] = heap->array[heap->tamanho - 1];
     heap->tamanho--;
-    minHeapify(heap, 0, ehMenor);
 
+    minHeapify(heap, 0, ehMenor);
     return minimo;
 }
 

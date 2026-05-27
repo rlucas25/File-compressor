@@ -1,209 +1,99 @@
+#include "Heap.h"
+#include "Huffman.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Heap.h"
-#include "Huffman.h"
 
-int main()
-{
-    int menu;
-    char nome_entrada_C[256], nome_saida_C[256], nome_entrada_D[256], nome_saida_D[256], verificar_ocorrencia[256];
-    char extensao_entrada[10];
-    char dicionario[256][256] = {0};
-    FILE *entrada = NULL;
-    FILE *saida = NULL;
+int main() {
+  int menu;
+  char nome_entrada_C[256], nome_saida_C[256], nome_entrada_D[256],
+      nome_saida_D[256], verificar_ocorrencia[256];
+  char extensao_entrada[10];
 
-    // Ponteiro para segurar a árvore quando ela for criada (não perder a árvore)
-    Arvore *arvore = NULL;
+  FILE *entrada = NULL;
+  FILE *saida = NULL;
 
-    do
-    {
-        printf("Menu de Opcoes:\n1. Comprimir um arquivo\n2. Contagem de ocorrencias de um elemento no arquivo de texto\n3. Imprimir o codigo de Huffman para o arquivo de texto\n4. Descomprimir um arquivo\n5. Sair\n");
+  Arvore *arvore = NULL;
 
-        scanf("%d", &menu);
+  do {
+    printf(
+        "Menu de Opcoes:\n1. Comprimir um arquivo\n2. Contagem de ocorrencias "
+        "no arquivo de texto\n3. Imprimir o codigo de Huffman "
+        "para o arquivo de texto\n4. Descomprimir um arquivo\n5. Sair\n");
 
-        switch (menu)
-        {
-        case 1:
-            printf("Digite o nome do arquivo que deseja comprimir: ");
-            scanf("%s", nome_entrada_C);
+    scanf("%d", &menu);
 
-            char *extensao = strrchr(nome_entrada_C, '.');
+    switch (menu) {
 
-            if (extensao != NULL)
-            {
-                strncpy(extensao_entrada, extensao, 9);
-            }
+    case 1:
+      printf("Digite o nome do arquivo que deseja comprimir: ");
+      scanf("%s", nome_entrada_C);
 
-            printf("Digite o nome do arquivo de saida: ");
-            scanf("%s", nome_saida_C);
-            
-            strcat(nome_saida_C, ".huf");
+      char *extensao = strrchr(nome_entrada_C, '.');
 
-            //se for igual vai substituir .huf para (1).huf
-            if (strcmp(nome_entrada_C, nome_saida_C) == 0){
+      if (extensao != NULL) {
+        strncpy(extensao_entrada, extensao, 9);
+      }
 
-                //ponteiro ponto para apontar para o ultimo ponto
-                char *ponto = strrchr (nome_saida_C,'.');
+      printf("Digite o nome do arquivo de saida: ");
+      scanf("%s", nome_saida_C);
 
-                // se não for nulo ele faz esse ponto se \0 para mandar o strcat
-                if (ponto != NULL){
-                    *ponto = '\0';
-                }
-                //agora que é \0 ele vai concatenar (1).huf até o novo \0 que ficava o .huf sobescrevendo ele.
-                strcat(nome_saida_C, "(1).huf");
-            }
+      comprimir(arvore, extensao_entrada, nome_entrada_C, nome_saida_C);
+      break;
 
-            entrada = fopen(nome_entrada_C, "rb");
-            saida = fopen(nome_saida_C, "wb");
-            
-            if (entrada == NULL || saida == NULL)
-            {
-                printf("\n\tFalha ao abrir o arquivo! Voltando ao menu inicial!\n\n");
-                break;
-            }
-            
-            fseek(entrada, 0, SEEK_END);
-            long tamanhoEntrada = ftell(entrada);
-            fseek(entrada, 0, SEEK_SET);
-            
-            if ( arvore != NULL)
-            {
-                liberarArvore(arvore);
-                arvore = NULL;
-            }
-            
-            arvore = huffman(nome_entrada_C);
-            
-            if (arvore == NULL)
-            {
-                printf("Erro ao cria a árvore de Huffman.\n");
-                break;
-            }
-            char caminho[256];
-            gerarDicionario(arvore->raiz, dicionario, caminho, 0);
-            
+    case 2:
 
-            fwrite(arvore->tabelaFrequencias, sizeof(int), 256, saida);
-            fwrite(extensao_entrada, sizeof(char), 10, saida);
-            codificar(entrada, saida, dicionario);
+      if (arvore == NULL) {
+        printf("\n\tNenhuma arvore de Huffman foi criada ainda. Por favor, "
+               "comprima um arquivo primeiro.\n");
+        break;
+      }
 
-            fseek(saida, 0, SEEK_END);
-            long tamanhoSaida = ftell(saida);
-            fseek(saida, 0, SEEK_SET);
+      int i = 0;
 
-            printf("\n\tComprimido!\nTamanho Original: %ld bytes (100%%)\nTamanho Comprimido: %ld bytes (%.2f%%)\n\n", tamanhoEntrada, tamanhoSaida, (float)tamanhoSaida / tamanhoEntrada * 100);
-            fclose(entrada);
-            fclose(saida);
-            break;
+      printf("\tCÓDIGO ASCII\tCARACTERE\tFREQUÊNCIA\t|\tCÓDIGO "
+             "ASCII\tCARACTERE\tFREQUÊNCIA\n");
 
-        case 2:
-            printf("Digite qual elemento voce deseja verificar a ocorrencia: ");
-            scanf("%s", verificar_ocorrencia);
+      for (; i < 127; i++) {
+        printf("\t\t%d\t%s\t\t%d\t", i, ascii[i],
+               arvore->tabelaFrequencias[(unsigned char)i]);
+        printf("\t|\t%d\t\t%s\t\t%d\n", i + 127, ascii[i + 127],
+               arvore->tabelaFrequencias[(unsigned char)i + 127]);
+      }
+      printf("\t\t%d\t%s\t\t%d\n", i, ascii[i],
+             arvore->tabelaFrequencias[(unsigned char)i]);
 
-            if (arvore == NULL)
-            {
-                printf("\n\tNenhuma arvore de Huffman foi criada ainda. Por favor, comprima um arquivo primeiro.\n");
-                break;
-            }
-            else
-            {
-                printf("\n\tA letra '%s' ocorre %d vezes no arquivo.\n", verificar_ocorrencia, arvore->tabelaFrequencias[(unsigned char)verificar_ocorrencia[0]]);
-            }
-            break;
+      break;
 
-        case 3:
-            imprimirArvore(arvore->raiz);
-            break;
+    case 3:
+      imprimirArvore(arvore->raiz);
+      break;
 
-        case 4:
-            printf("Digite o nome do arquivo que deseja descomprimir (exemplo.huf): ");
-            scanf("%s", nome_entrada_D);
-            
-            if (strlen(nome_entrada_D) < 4 || strcmp(nome_entrada_D + strlen(nome_entrada_D) - 4, ".huf") != 0)
-            {
-                printf("\n\tErro: O arquivo deve ter a extensão .huf\n");
-                break;
-            }
-            printf("Digite o nome do arquivo de saida: ");
-            scanf("%s", nome_saida_D);
+    case 4:
+      printf(
+          "Digite o nome do arquivo que deseja descomprimir (exemplo.huf): ");
+      scanf("%s", nome_entrada_D);
 
-            printf("\n\tRealizando descomprensao do arquivo %s\n", nome_entrada_D);
+      if (strlen(nome_entrada_D) < 4 ||
+          strcmp(nome_entrada_D + strlen(nome_entrada_D) - 4, ".huf") != 0) {
+        printf("\n\tErro: O arquivo deve ter a extensão .huf\n");
+        break;
+      }
+      printf("Digite o nome do arquivo de saida: ");
+      scanf("%s", nome_saida_D);
 
-            entrada = fopen(nome_entrada_D, "rb");
+      printf("\n\tRealizando descomprensao do arquivo %s\n", nome_entrada_D);
+      Arvore *arvoreRecuperada = NULL;
+      descomprimir(arvoreRecuperada, nome_entrada_D, nome_saida_D);
+      // Para esta implementação não precisamos da árvore recuperada após a descompressão, então podemos liberá-la
+      liberarArvore(arvoreRecuperada);
+      break;
 
-            if (entrada == NULL)
-            {
-                printf("\n\tErro ao abrir o arquivo compactado\n");
-                break;
-            }
-            
-            // Lê os primeiros 256 caracteres no arquivo que salvamos de cabeçário
-            int tabelaRecuperada[256] = {0};
-            if (fread(tabelaRecuperada, sizeof(int), 256, entrada) < 1)
-            {
-                printf("\n\tErro ao ler a tabela de frequências do arquivo compactado\n");
-                fclose(entrada);
-                break;
-            }
-            // lê os caracteres depois dos 256 caracteres, ou seja, os 10 caracteres de extensão salvo no cabeçário.
-            char extensao_recuperada[10] = {0};
-            fread(extensao_recuperada, sizeof(char), 10, entrada);
-
-            char *ponto_huf = strrchr(nome_saida_D, '.');
-
-            // Se não for nulo, trocar o . por \0 para ler só até antes do .huff
-            if (ponto_huf != NULL)
-            {
-                *ponto_huf = '\0';
-            }
-
-            // se tiver uma extensão ele coloca ela no arquivo de saida, se não ele retorna como .txt no pior dos casos
-            if (strlen(extensao_recuperada) > 0)
-            {
-                strcat(nome_saida_D, extensao_recuperada);
-            }
-            else
-            {
-                strcat(nome_saida_D, ".txt");
-            }
-
-            if ( strcmp(nome_entrada_D, nome_saida_D) == 0){
-
-                char *ponto = strrchr(nome_saida_D,'.');
-
-                if (ponto != NULL){
-                    *ponto = '\0';
-                }
-                strcat(nome_saida_D, "(1).huf");
-            }
-
-            saida = fopen(nome_saida_D, "wb");
-            if (saida == NULL)
-            {
-                printf("\n\tErro ao criar o arquivo de saída\n");
-                fclose(entrada);
-                break;
-            }
-
-            Arvore *arvoreRecuperada = criarArvoreHuffman(tabelaRecuperada);
-            
-            bool sucessoDecodificacao = decodificar(arvoreRecuperada->raiz, entrada, saida);
-
-            if (sucessoDecodificacao){
-                printf("\n\tArquivo descomprimido com sucesso...\n\t Nome do arquivo: %s\n", nome_saida_D);
-            }
-
-            liberarArvore(arvoreRecuperada);
-            fclose(entrada);
-            fclose(saida);
-            break;
-
-        case 5:
-            printf("\n\tEncerrando programa!");
-            liberarArvore(arvore);
-            exit(1);
-            break;
-        }
-    } while (menu != 5);
+    case 5:
+      printf("\n\tEncerrando programa!");
+      liberarArvore(arvore);
+      exit(1);
+      break;
+    }
+  } while (menu != 5);
 }

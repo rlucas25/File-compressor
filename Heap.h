@@ -23,4 +23,4 @@ void *retiraMinimo(Heap *heap, bool (*ehMenor)(void *, void *));
 
 void liberarHeap(Heap *heap, void (*liberarChave)(void *));
 
-#endif // HEAP_H
+#endif
