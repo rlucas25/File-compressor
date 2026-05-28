@@ -17,7 +17,7 @@ int main() {
 
   do {
     printf(
-        "Menu de Opcoes:\n1. Comprimir um arquivo\n2. Contagem de ocorrencias "
+        "\nMenu de Opcoes:\n1. Comprimir um arquivo\n2. Contagem de ocorrencias "
         "no arquivo de texto\n3. Imprimir o codigo de Huffman "
         "para o arquivo de texto\n4. Descomprimir um arquivo\n5. Sair\n");
 

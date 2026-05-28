@@ -165,6 +165,12 @@ Arvore *criarArvoreHuffman(int *tabelaFrequencias) {
       inserir(heap, z, ehMenor_Huffman);
     }
   }
+  if (heap->tamanho == 0) {
+    arvore->raiz = criaNo('$', 0);
+    free(heap->array);
+    free(heap);
+    return arvore; 
+  }
   if (heap->tamanho == 1) {
     z = criaNo('$', 0);
     inserir(heap, z, ehMenor_Huffman);
@@ -259,8 +265,13 @@ bool decodificar(No *raiz, FILE *entrada, FILE *saida) {
     printf("Erro: Raiz, arquivo de entrada ou saída é nulo\n");
     return false;
   }
-  if (raiz->freq <= 0) {
-    printf("Erro: A frequência da raiz é zero ou negativa, não é possível "
+  
+  if (raiz->freq == 0) {
+    return true; 
+  }
+
+  if (raiz->freq < 0) {
+    printf("Erro: A frequência da raiz é negativa, não é possível "
            "decodificar\n");
     return false;
   }
@@ -314,13 +325,12 @@ Arvore *comprimir(const char *extensao, const char *nomeEntrada,
   }
 
   FILE *entrada = fopen(nomeEntrada, "rb");
-  if (entrada != NULL){
-    fclose(entrada);
+  if (entrada == NULL){
     printf("\n\tFalha ao abrir o arquivo! Voltando ao menu inicial!\n\n");
     return NULL;
   }
   FILE *saida = fopen(nomeSaida, "wb"); 
-   if (entrada != NULL){
+  if (saida == NULL){
     fclose(entrada);
     printf("\n\tFalha ao abrir o arquivo! Voltando ao menu inicial!\n\n");
     return NULL;
@@ -369,11 +379,7 @@ Arvore *descomprimir(const char *nomeEntrada, char *nomeSaida) {
   }
 
   int tabelaRecuperada[256] = {0};
-  if (fread(tabelaRecuperada, sizeof(int), 256, entrada) < 1) {
-    printf("\n\tErro ao ler a tabela de frequências do arquivo compactado\n");
-    fclose(entrada);
-    return NULL;
-  }
+  fread(tabelaRecuperada, sizeof(int), 256, entrada);
 
   char extensao_recuperada[10] = {0};
   fread(extensao_recuperada, sizeof(char), 10, entrada);
