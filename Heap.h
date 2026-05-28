@@ -1,3 +1,13 @@
+/* 
+    ALUNOS
+Dennis Francisco Guimarães de Oliveira Baracho
+Heitor Santos Maia
+Lucas Rebouças Almeida
+Marcos Vinícius Pimentel Gomes
+
+*/
+
+
 #ifndef HEAP_H
 #define HEAP_H
 

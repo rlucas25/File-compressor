@@ -1,3 +1,13 @@
+/* 
+    ALUNOS
+Dennis Francisco Guimarães de Oliveira Baracho
+Heitor Santos Maia
+Lucas Rebouças Almeida
+Marcos Vinícius Pimentel Gomes
+
+*/
+
+
 #ifndef HUFFMAN_H
 #define HUFFMAN_H
 #define MAX_ALTURA 50

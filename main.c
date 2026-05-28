@@ -1,3 +1,13 @@
+/* 
+    ALUNOS
+Dennis Francisco Guimarães de Oliveira Baracho
+Heitor Santos Maia
+Lucas Rebouças Almeida
+Marcos Vinícius Pimentel Gomes
+
+*/
+
+
 #include "Heap.h"
 #include "Huffman.h"
 #include <stdio.h>

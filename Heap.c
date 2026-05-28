@@ -1,3 +1,12 @@
+/* 
+    ALUNOS
+Dennis Francisco Guimarães de Oliveira Baracho
+Heitor Santos Maia
+Lucas Rebouças Almeida
+Marcos Vinícius Pimentel Gomes
+
+*/
+
 #include "Heap.h"
 
 Heap *criarHeap(int capacidade)
