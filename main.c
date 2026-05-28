@@ -38,7 +38,7 @@ int main() {
       printf("Digite o nome do arquivo de saida: ");
       scanf("%s", nome_saida_C);
 
-      if(arvore != NULL){
+      if (arvore != NULL) {
         liberarArvore(arvore);
       }
 
@@ -53,25 +53,13 @@ int main() {
         break;
       }
 
-      int i = 0;
+      printf("\tCÓDIGO ASCII\tCARACTERE\tFREQUÊNCIA\n");
 
-      printf("\tCÓDIGO ASCII\tCARACTERE\tFREQUÊNCIA\t|\tCÓDIGO "
-             "ASCII\tCARACTERE\tFREQUÊNCIA\n");
-
-      for (int i = 0; i < 128; i++) {
+      for (int i = 0; i < 256; i++) {
         if (arvore->tabelaFrequencias[i] > 0) {
-          printf("\t\t%d\t%s\t\t%d\t", i, ascii[i],
+          printf("\t   %d\t\t   %s\t\t   %d\t\n", i, ascii[i],
                  arvore->tabelaFrequencias[i]);
-        } else {
-          printf("\t\t\t\t\t\t");
         }
-
-        if (arvore->tabelaFrequencias[i + 128] > 0) {
-          printf("\t|\t%d\t\t%s\t\t%d", i + 128, ascii[i + 128],
-                 arvore->tabelaFrequencias[i + 128]);
-        }
-
-        printf("\n");
       }
 
       break;
