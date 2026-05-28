@@ -65,6 +65,11 @@ int main() {
       break;
 
     case 3:
+      if (arvore == NULL) {
+        printf("\n\tNenhuma arvore de Huffman foi criada ainda. Por favor, "
+               "comprima um arquivo primeiro.\n");
+        break;
+      }
       imprimirArvore(arvore->raiz);
       break;
 

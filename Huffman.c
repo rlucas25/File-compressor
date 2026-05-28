@@ -167,14 +167,15 @@ Arvore *criarArvoreHuffman(int *tabelaFrequencias) {
   }
   if (heap->tamanho == 1) {
     z = criaNo('$', 0);
-    inserir (heap, z, ehMenor_Huffman);
-}
+    inserir(heap, z, ehMenor_Huffman);
+  }
   while (heap->tamanho > 1) {
     x = retiraMinimo(heap, ehMenor_Huffman);
     y = retiraMinimo(heap, ehMenor_Huffman);
     z = criaNo('$', x->freq + y->freq);
     if (z == NULL) {
-      printf("Erro: Falha ao criar nó interno para os nós %c e %c\n", x->c, y->c);
+      printf("Erro: Falha ao criar nó interno para os nós %c e %c\n", x->c,
+             y->c);
       liberarArvore(arvore);
       free(heap->array);
       free(heap);
@@ -313,12 +314,15 @@ Arvore *comprimir(const char *extensao, const char *nomeEntrada,
   }
 
   FILE *entrada = fopen(nomeEntrada, "rb");
-  FILE *saida = fopen(nomeSaida, "wb");
-
-  if (entrada == NULL || saida == NULL) {
+  if (entrada != NULL){
+    fclose(entrada);
     printf("\n\tFalha ao abrir o arquivo! Voltando ao menu inicial!\n\n");
-    if(entrada != NULL) fclose(entrada);
-    if(saida != NULL) fclose(saida);
+    return NULL;
+  }
+  FILE *saida = fopen(nomeSaida, "wb"); 
+   if (entrada != NULL){
+    fclose(entrada);
+    printf("\n\tFalha ao abrir o arquivo! Voltando ao menu inicial!\n\n");
     return NULL;
   }
 
