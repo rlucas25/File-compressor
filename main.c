@@ -8,7 +8,7 @@ int main() {
   int menu;
   char nome_entrada_C[256], nome_saida_C[256], nome_entrada_D[256],
       nome_saida_D[256], verificar_ocorrencia[256];
-  char extensao_entrada[10];
+  char extensao_entrada[10] = {0};
 
   FILE *entrada = NULL;
   FILE *saida = NULL;
@@ -38,7 +38,11 @@ int main() {
       printf("Digite o nome do arquivo de saida: ");
       scanf("%s", nome_saida_C);
 
-      comprimir(arvore, extensao_entrada, nome_entrada_C, nome_saida_C);
+      if(arvore != NULL){
+        liberarArvore(arvore);
+      }
+
+      arvore = comprimir(extensao_entrada, nome_entrada_C, nome_saida_C);
       break;
 
     case 2:
@@ -54,14 +58,21 @@ int main() {
       printf("\tCÓDIGO ASCII\tCARACTERE\tFREQUÊNCIA\t|\tCÓDIGO "
              "ASCII\tCARACTERE\tFREQUÊNCIA\n");
 
-      for (; i < 127; i++) {
-        printf("\t\t%d\t%s\t\t%d\t", i, ascii[i],
-               arvore->tabelaFrequencias[(unsigned char)i]);
-        printf("\t|\t%d\t\t%s\t\t%d\n", i + 127, ascii[i + 127],
-               arvore->tabelaFrequencias[(unsigned char)i + 127]);
+      for (int i = 0; i < 128; i++) {
+        if (arvore->tabelaFrequencias[i] > 0) {
+          printf("\t\t%d\t%s\t\t%d\t", i, ascii[i],
+                 arvore->tabelaFrequencias[i]);
+        } else {
+          printf("\t\t\t\t\t\t");
+        }
+
+        if (arvore->tabelaFrequencias[i + 128] > 0) {
+          printf("\t|\t%d\t\t%s\t\t%d", i + 128, ascii[i + 128],
+                 arvore->tabelaFrequencias[i + 128]);
+        }
+
+        printf("\n");
       }
-      printf("\t\t%d\t%s\t\t%d\n", i, ascii[i],
-             arvore->tabelaFrequencias[(unsigned char)i]);
 
       break;
 
@@ -83,10 +94,8 @@ int main() {
       scanf("%s", nome_saida_D);
 
       printf("\n\tRealizando descomprensao do arquivo %s\n", nome_entrada_D);
-      Arvore *arvoreRecuperada = NULL;
-      descomprimir(arvoreRecuperada, nome_entrada_D, nome_saida_D);
-      // Para esta implementação não precisamos da árvore recuperada após a descompressão, então podemos liberá-la
-      liberarArvore(arvoreRecuperada);
+      liberarArvore(arvore);
+      arvore = descomprimir(nome_entrada_D, nome_saida_D);
       break;
 
     case 5:

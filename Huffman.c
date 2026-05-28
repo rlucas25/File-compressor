@@ -1,43 +1,44 @@
 #include "Huffman.h"
+#include "Heap.h"
 #include <string.h>
 const char *ascii[256] = {
-    "NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS", "HT", "LF",
-    "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK",
-    "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US",
+    "NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS",  "HT",  "LF",
+    "VT",  "FF",  "CR",  "SO",  "SI",  "DLE", "DC1", "DC2", "DC3", "DC4", "NAK",
+    "SYN", "ETB", "CAN", "EM",  "SUB", "ESC", "FS",  "GS",  "RS",  "US",
 
-    " ", "!", "\"", "#", "$", "%%", "&", "\'", "(", ")", "*", "+", ",", "-",
-    ".", "/",
+    " ",   "!",   "\"",  "#",   "$",   "%%",  "&",   "\'",  "(",   ")",   "*",
+    "+",   ",",   "-",   ".",   "/",
 
-    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ":", ";", "<", "=", ">",
-    "?",
+    "0",   "1",   "2",   "3",   "4",   "5",   "6",   "7",   "8",   "9",   ":",
+    ";",   "<",   "=",   ">",   "?",
 
-    "@", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
-    "O",
+    "@",   "A",   "B",   "C",   "D",   "E",   "F",   "G",   "H",   "I",   "J",
+    "K",   "L",   "M",   "N",   "O",
 
-    "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "[", "\\", "]", "^",
-    "_",
+    "P",   "Q",   "R",   "S",   "T",   "U",   "V",   "W",   "X",   "Y",   "Z",
+    "[",   "\\",  "]",   "^",   "_",
 
-    "`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
-    "o",
+    "`",   "a",   "b",   "c",   "d",   "e",   "f",   "g",   "h",   "i",   "j",
+    "k",   "l",   "m",   "n",   "o",
 
-    "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "{", "|", "}", "~",
-    "DEL",
+    "p",   "q",   "r",   "s",   "t",   "u",   "v",   "w",   "x",   "y",   "z",
+    "{",   "|",   "}",   "~",   "DEL",
 
-    "Ç", "ü", "é", "â", "ä", "à", "å", "ç", "ê", "ë", "è", "ï", "î", "ì", "Ä",
-    "Å", "É", "æ", "Æ", "ô", "ö", "ò", "û", "ù", "ÿ", "Ö", "Ü", "¢", "£", "¥",
-    "₧", "ƒ",
+    "Ç",   "ü",   "é",   "â",   "ä",   "à",   "å",   "ç",   "ê",   "ë",   "è",
+    "ï",   "î",   "ì",   "Ä",   "Å",   "É",   "æ",   "Æ",   "ô",   "ö",   "ò",
+    "û",   "ù",   "ÿ",   "Ö",   "Ü",   "¢",   "£",   "¥",   "₧",   "ƒ",
 
-    "á", "í", "ó", "ú", "ñ", "Ñ", "ª", "º", "¿", "⌐", "¬", "½", "¼", "¡", "«",
-    "»", "░", "▒", "▓", "│", "┤", "Á", "Â", "À", "©", "╣", "║", "╗", "╝", "¢",
-    "¥", "┐",
+    "á",   "í",   "ó",   "ú",   "ñ",   "Ñ",   "ª",   "º",   "¿",   "⌐",   "¬",
+    "½",   "¼",   "¡",   "«",   "»",   "░",   "▒",   "▓",   "│",   "┤",   "Á",
+    "Â",   "À",   "©",   "╣",   "║",   "╗",   "╝",   "¢",   "¥",   "┐",
 
-    "└", "┴", "┬", "├", "─", "┼", "ã", "Ã", "╚", "╔", "╩", "╦", "╠", "═", "╬",
-    "¤", "ð", "Ð", "Ê", "Ë", "È", "ı", "Í", "Î", "Ï", "┘", "┌", "█", "▄", "¦",
-    "Ì", "▀",
+    "└",   "┴",   "┬",   "├",   "─",   "┼",   "ã",   "Ã",   "╚",   "╔",   "╩",
+    "╦",   "╠",   "═",   "╬",   "¤",   "ð",   "Ð",   "Ê",   "Ë",   "È",   "ı",
+    "Í",   "Î",   "Ï",   "┘",   "┌",   "█",   "▄",   "¦",   "Ì",   "▀",
 
-    "Ó", "ß", "Ô", "Ò", "õ", "Õ", "µ", "þ", "Þ", "Ú", "Û", "Ù", "ý", "Ý", "¯",
-    "´", "≡", "±", "‗", "¾", "¶", "§", "÷", "¸", "°", "¨", "·", "¹", "³", "²",
-    "■", " "};
+    "Ó",   "ß",   "Ô",   "Ò",   "õ",   "Õ",   "µ",   "þ",   "Þ",   "Ú",   "Û",
+    "Ù",   "ý",   "Ý",   "¯",   "´",   "≡",   "±",   "‗",   "¾",   "¶",   "§",
+    "÷",   "¸",   "°",   "¨",   "·",   "¹",   "³",   "²",   "■",   " "};
 
 bool ehMenor_Huffman(void *pA, void *pB) {
   if (pA == NULL || pB == NULL) {
@@ -113,8 +114,13 @@ Arvore *criarArvoreHuffman(int *tabelaFrequencias) {
 
   Heap *heap = criarHeap(256);
 
-  if (heap == NULL || heap->array == NULL) {
+  if (heap == NULL) {
     printf("Erro: Falha ao criar a heap\n");
+    return NULL;
+  }
+  if (heap->array == NULL) {
+    printf("Erro: Falha ao alocar memória para o array da heap\n");
+    free(heap);
     return NULL;
   }
 
@@ -126,12 +132,16 @@ Arvore *criarArvoreHuffman(int *tabelaFrequencias) {
     free(heap);
     return NULL;
   }
+  arvore->raiz = NULL;
+  arvore->tabelaFrequencias = NULL;
+  arvore->tamanhoTabela = 0;
+
   arvore->tabelaFrequencias = malloc(256 * sizeof(int));
 
   if (arvore->tabelaFrequencias == NULL) {
     printf("Erro: Falha ao alocar memória para a tabela de frequências da "
            "árvore\n");
-    free(arvore);
+    liberarArvore(arvore);
     free(heap->array);
     free(heap);
     return NULL;
@@ -145,13 +155,31 @@ Arvore *criarArvoreHuffman(int *tabelaFrequencias) {
   for (int i = 0; i < 256; i++) {
     if (arvore->tabelaFrequencias[i] > 0) {
       z = criaNo((unsigned char)i, arvore->tabelaFrequencias[i]);
+      if (z == NULL) {
+        printf("Erro: Falha ao criar nó para o caractere %d\n", i);
+        liberarArvore(arvore);
+        free(heap->array);
+        free(heap);
+        return NULL;
+      }
       inserir(heap, z, ehMenor_Huffman);
     }
   }
+  if (heap->tamanho == 1) {
+    z = criaNo('$', 0);
+    inserir (heap, z, ehMenor_Huffman);
+}
   while (heap->tamanho > 1) {
     x = retiraMinimo(heap, ehMenor_Huffman);
     y = retiraMinimo(heap, ehMenor_Huffman);
     z = criaNo('$', x->freq + y->freq);
+    if (z == NULL) {
+      printf("Erro: Falha ao criar nó interno para os nós %c e %c\n", x->c, y->c);
+      liberarArvore(arvore);
+      free(heap->array);
+      free(heap);
+      return NULL;
+    }
 
     z->left = x;
     z->right = y;
@@ -265,10 +293,11 @@ bool decodificar(No *raiz, FILE *entrada, FILE *saida) {
   return false;
 }
 
-void comprimir(Arvore *arvore, const char *extensao, const char *nomeEntrada, char *nomeSaida) {
+Arvore *comprimir(const char *extensao, const char *nomeEntrada,
+                  char *nomeSaida) {
   if (nomeEntrada == NULL || nomeSaida == NULL) {
     printf("Erro: Nome do arquivo de entrada ou saída é nulo\n");
-    return;
+    return NULL;
   }
   char dicionario[256][256] = {0};
 
@@ -288,25 +317,22 @@ void comprimir(Arvore *arvore, const char *extensao, const char *nomeEntrada, ch
 
   if (entrada == NULL || saida == NULL) {
     printf("\n\tFalha ao abrir o arquivo! Voltando ao menu inicial!\n\n");
-    return;
+    if(entrada != NULL) fclose(entrada);
+    if(saida != NULL) fclose(saida);
+    return NULL;
   }
 
   fseek(entrada, 0, SEEK_END);
   long tamanhoEntrada = ftell(entrada);
   fseek(entrada, 0, SEEK_SET);
 
-  if (arvore != NULL) {
-    liberarArvore(arvore);
-    arvore = NULL;
-  }
-
-  arvore = huffman(nomeEntrada);
+  Arvore *arvore = huffman(nomeEntrada);
 
   if (arvore == NULL) {
     printf("Erro ao cria a árvore de Huffman.\n");
     fclose(entrada);
     fclose(saida);
-    return;
+    return NULL;
   }
 
   char caminho[256];
@@ -326,30 +352,29 @@ void comprimir(Arvore *arvore, const char *extensao, const char *nomeEntrada, ch
          (float)tamanhoSaida / tamanhoEntrada * 100);
   fclose(entrada);
   fclose(saida);
-  return;
+  return arvore;
 }
 
-void descomprimir(Arvore *arvoreRecuperada, const char *nomeEntrada, char *nomeSaida) {
+Arvore *descomprimir(const char *nomeEntrada, char *nomeSaida) {
   FILE *entrada = fopen(nomeEntrada, "rb");
   FILE *saida = NULL;
 
   if (entrada == NULL) {
     printf("\n\tErro ao abrir o arquivo compactado\n");
-    fclose(entrada);
-    return;
+    return NULL;
   }
 
   int tabelaRecuperada[256] = {0};
   if (fread(tabelaRecuperada, sizeof(int), 256, entrada) < 1) {
     printf("\n\tErro ao ler a tabela de frequências do arquivo compactado\n");
     fclose(entrada);
-    return;
+    return NULL;
   }
+
   char extensao_recuperada[10] = {0};
   fread(extensao_recuperada, sizeof(char), 10, entrada);
 
   char *ponto_huf = strrchr(nomeSaida, '.');
-
   if (ponto_huf != NULL) {
     *ponto_huf = '\0';
   }
@@ -361,26 +386,28 @@ void descomprimir(Arvore *arvoreRecuperada, const char *nomeEntrada, char *nomeS
   }
 
   if (strcmp(nomeEntrada, nomeSaida) == 0) {
-
     char *ponto = strrchr(nomeSaida, '.');
-
     if (ponto != NULL) {
       *ponto = '\0';
     }
-    strcat(nomeSaida, "(1).huf");
+    strcat(nomeSaida, "(1)");
+    if (strlen(extensao_recuperada) > 0) {
+      strcat(nomeSaida, extensao_recuperada);
+    } else {
+      strcat(nomeSaida, ".txt");
+    }
   }
 
   saida = fopen(nomeSaida, "wb");
   if (saida == NULL) {
     printf("\n\tErro ao criar o arquivo de saída\n");
     fclose(entrada);
-    fclose(saida);
-    return;
+    return NULL;
   }
-  liberarArvore(arvoreRecuperada);
-  arvoreRecuperada = criarArvoreHuffman(tabelaRecuperada);
+  Arvore *arvoreRecuperada = criarArvoreHuffman(tabelaRecuperada);
 
-  bool sucessoDecodificacao = decodificar(arvoreRecuperada->raiz, entrada, saida);
+  bool sucessoDecodificacao =
+      decodificar(arvoreRecuperada->raiz, entrada, saida);
 
   if (sucessoDecodificacao) {
     printf("\n\tArquivo descomprimido com sucesso...\n\t Nome do arquivo: %s\n",
@@ -393,7 +420,7 @@ void descomprimir(Arvore *arvoreRecuperada, const char *nomeEntrada, char *nomeS
 
   fclose(entrada);
   fclose(saida);
-  return;
+  return arvoreRecuperada;
 }
 
 void liberarArvore(Arvore *arvore) {
