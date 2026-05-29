@@ -514,12 +514,12 @@ void montarArvore(No *raiz, char matriz[MAX_ALTURA][MAX_LARGURA], int linha,
 
   if (raiz->left != NULL) {
     matriz[linha + 1][coluna - espaco / 2] = '/';
-    montarArvore(raiz->left, matriz, linha + 2, coluna - espaco, espaco / 2);
+    montarArvore(raiz->left, matriz, linha + 2, coluna - espaco / 2, espaco / 2);
   }
 
   if (raiz->right != NULL) {
     matriz[linha + 1][coluna + espaco / 2] = '\\';
-    montarArvore(raiz->right, matriz, linha + 2, coluna + espaco, espaco / 2);
+    montarArvore(raiz->right, matriz, linha + 2, coluna + espaco / 2, espaco / 2);
   }
 }
 
@@ -539,8 +539,8 @@ void imprimirArvore(No *raiz) {
 
   int h = altura(raiz);
 
-  int colunaInicial = MAX_LARGURA / 2;
-  int espacoInicial = 32;
+  int colunaInicial = MAX_LARGURA / 4;
+  int espacoInicial = MAX_LARGURA / 4;
 
   montarArvore(raiz, matriz, 0, colunaInicial, espacoInicial);
 
