@@ -352,7 +352,7 @@ Arvore *comprimir(const char *extensao, const char *nomeEntrada,
   Arvore *arvore = huffman(nomeEntrada);
 
   if (arvore == NULL) {
-    printf("Erro ao cria a árvore de Huffman.\n");
+    printf("Erro ao criar a árvore de Huffman.\n");
     fclose(entrada);
     fclose(saida);
     return NULL;

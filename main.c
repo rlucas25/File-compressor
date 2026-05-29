@@ -106,6 +106,9 @@ int main() {
       liberarArvore(arvore);
       exit(1);
       break;
+    default:
+        printf("\n\tOpcao invalida! Por favor, escolha uma opcao entre 1 e 5.\n");
+        break;
     }
   } while (menu != 5);
 }
