@@ -1,8 +1,7 @@
 CFLAGS=-O0 -std=c11 -Wall -Werror -Wextra -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wshadow -fsanitize=address,undefined,leak 
 CLIBS=-lm
-LDFLAGS = -fsanitize=address,undefined,leak # Flags usadas no linking (geram o executável)
-PKG = `pkg-config --cflags --libs gtk+-3.0`
-EXECUTAVEL=Huffman.exe # nome do executável final
+LDFLAGS = -fsanitize=address,undefined,leak
+EXECUTAVEL=Huffman.exe
 
 all: $(EXECUTAVEL)
 
